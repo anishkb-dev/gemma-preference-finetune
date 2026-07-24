@@ -1,0 +1,22 @@
+# data & artifacts
+data/*.csv
+data/*.zip
+models/*
+submissions/*.csv
+!data/.gitkeep
+!models/.gitkeep
+!submissions/.gitkeep
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# secrets
+kaggle.json
+.env
+
+# os
+.DS_Store
+submissions/*.log

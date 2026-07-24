@@ -1,0 +1,18 @@
+{
+  "id": "anishkb24/gemma9b-full",
+  "title": "gemma9b-full",
+  "code_file": "gemma9b-full.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": [
+    "llm-classification-finetuning"
+  ],
+  "model_sources": [
+    "google/gemma-2/transformers/gemma-2-9b-it/2"
+  ],
+  "kernel_sources": []
+}

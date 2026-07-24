@@ -1,0 +1,20 @@
+{
+  "id": "anishkb24/gemma-infer",
+  "title": "gemma-infer",
+  "code_file": "gemma-infer.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "dataset_sources": [
+    "anishkb24/gemma-adapter"
+  ],
+  "competition_sources": [
+    "llm-classification-finetuning"
+  ],
+  "model_sources": [
+    "google/gemma-2/transformers/gemma-2-9b-it/2"
+  ],
+  "kernel_sources": []
+}
