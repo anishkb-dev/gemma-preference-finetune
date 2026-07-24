@@ -174,8 +174,8 @@ INFER_CELLS = [
      "import torch, numpy as np, pandas as pd\n"
      "from transformers import AutoTokenizer, AutoModelForSequenceClassification\n"
      "from peft import PeftModel\n"
-     "MAX_LEN = 1024\n"
-     "BATCH = 8"),
+     "MAX_LEN = 512    # keep the 25K x2-TTA scoring re-run well under the 9h cap\n"
+     "BATCH = 16"),
     ("code", SHARED_DATA),
     ("code",
      "BASE = find_dir('/kaggle/input/**/config.json')\n"
@@ -204,13 +204,18 @@ INFER_CELLS = [
      "B = [join(x) for x in test['response_b']]\n\n"
      "@torch.no_grad()\n"
      "def predict(texts):\n"
-     "    out = []\n"
-     "    for i in range(0, len(texts), BATCH):\n"
-     "        enc = tok(texts[i:i+BATCH], truncation=True, max_length=MAX_LEN,\n"
+     "    # Sort by length so each batch pads to its own longest row (not a global max),\n"
+     "    # cutting wasted compute; scatter results back to original order.\n"
+     "    order = sorted(range(len(texts)), key=lambda i: len(texts[i]))\n"
+     "    probs = np.zeros((len(texts), 3), dtype=np.float32)\n"
+     "    for s in range(0, len(order), BATCH):\n"
+     "        idx = order[s:s+BATCH]\n"
+     "        enc = tok([texts[i] for i in idx], truncation=True, max_length=MAX_LEN,\n"
      "                  padding=True, return_tensors='pt').to(model.device)\n"
-     "        logits = model(**enc).logits.float()\n"
-     "        out.append(torch.softmax(logits, dim=1).cpu().numpy())\n"
-     "    return np.concatenate(out)"),
+     "        p = torch.softmax(model(**enc).logits.float(), dim=1).cpu().numpy()\n"
+     "        for j, i in enumerate(idx):\n"
+     "            probs[i] = p[j]\n"
+     "    return probs"),
     ("code",
      "# Forward view (A,B) and swapped view (B,A); swapping cancels position bias.\n"
      "fwd = predict([build_text(p, a, b) for p, a, b in zip(P, A, B)])\n"
