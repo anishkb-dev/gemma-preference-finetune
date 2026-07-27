@@ -172,7 +172,7 @@ CELLS = [
      "    output_dir='/kaggle/working/ckpt', per_device_train_batch_size=1,\n"
      "    gradient_accumulation_steps=16, per_device_eval_batch_size=1,\n"
      "    learning_rate=8e-5, num_train_epochs=EPOCHS, warmup_steps=50,\n"
-     "    lr_scheduler_type='cosine', fp16=True, gradient_checkpointing=True, logging_steps=25,\n"
+     "    lr_scheduler_type='cosine', fp16=True, gradient_checkpointing=True, logging_steps=10,\n"
      "    save_strategy='steps', save_steps=SAVE_STEPS, save_total_limit=2,\n"
      "    eval_strategy='no', report_to='none', optim='paged_adamw_8bit')\n"
      "trainer = Trainer(model=model, args=args, train_dataset=ds_tr, eval_dataset=ds_va,\n"
@@ -183,13 +183,20 @@ CELLS = [
      "done = trainer.state.global_step >= trainer.state.max_steps\n"
      "print(f'stopped at step {trainer.state.global_step}/{trainer.state.max_steps} '\n"
      "      f\"-- {'TRAINING COMPLETE' if done else 'partial: resume next session'}\")\n"
-     "print('train loss:', out.metrics.get('train_loss'))"),
+     "print('train loss:', out.metrics.get('train_loss'))\n"
+     "import json as _json\n"
+     "with open('/kaggle/working/log_history.json', 'w') as _f:\n"
+     "    _json.dump(trainer.state.log_history, _f)\n"
+     "print('NOTE: train loss ~16-18 is EXPECTED here (Gemma logits are large). The real signal\\n'\n"
+     "      '      is VALIDATION log_loss below -- beat 0.978 to win.')"),
     ("code",
      "model.save_pretrained('/kaggle/working/adapter')\n"
      "tok.save_pretrained('/kaggle/working/adapter')\n"
      "print(sorted(os.listdir('/kaggle/working/adapter')))\n"
-     "if done:\n"
-     "    print('VALIDATION log_loss:', trainer.evaluate().get('eval_log_loss'))"),
+     "# Always eval (even on partial sessions) -- this is the ONLY signal that matters.\n"
+     "vll = trainer.evaluate().get('eval_log_loss')\n"
+     "print(f'VALIDATION log_loss: {vll:.5f}   (baseline 1.0247 | old gemma 0.978 | random 1.0986)')\n"
+     "print('COMPLETE -- epoch finished' if done else 'PARTIAL -- resume next session for a better number')"),
 ]
 
 
