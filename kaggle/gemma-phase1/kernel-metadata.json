@@ -1,0 +1,20 @@
+{
+  "id": "anishkb24/gemma-phase1",
+  "title": "gemma-phase1",
+  "code_file": "gemma-phase1.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "abdullahmeda/lmsys-additional-33k-labelled-conversations"
+  ],
+  "competition_sources": [
+    "llm-classification-finetuning"
+  ],
+  "model_sources": [
+    "google/gemma-2/transformers/gemma-2-9b-it/2"
+  ],
+  "kernel_sources": []
+}
